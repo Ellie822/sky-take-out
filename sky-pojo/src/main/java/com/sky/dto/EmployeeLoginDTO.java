@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class EmployeeLoginDTO implements Serializable {
 
     @ApiModelProperty("用户名")
+    //在 Swagger 接口文档里，给这个字段标上中文说明 “用户名”
     private String username;
 
     @ApiModelProperty("密码")

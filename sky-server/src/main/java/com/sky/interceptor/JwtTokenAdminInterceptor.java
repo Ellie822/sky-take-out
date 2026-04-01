@@ -1,6 +1,7 @@
 package com.sky.interceptor;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -18,7 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @Slf4j
 public class JwtTokenAdminInterceptor implements HandlerInterceptor {
-
+//implements HandlerInterceptor：这是一个拦截器
+//所有请求先经过它，再进 Controller
     @Autowired
     private JwtProperties jwtProperties;
 
@@ -31,7 +33,12 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      * @return
      * @throws Exception
      */
+
+//    核心方法：preHandle → 请求之前先执行！
+//    返回 true = 放行
+//    返回 false = 拦截，不让访问
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("当前线程的id："+Thread.currentThread().getId());
         //判断当前拦截到的是Controller的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
             //当前拦截到的不是动态方法，直接放行
@@ -45,8 +52,12 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
+            //解密token
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+            //把解密后的用户信息里的【员工ID】拿出来，
+            //转成数字类型，存到 empId 变量里。
             log.info("当前员工id：", empId);
+            BaseContext.setCurrentId(empId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {

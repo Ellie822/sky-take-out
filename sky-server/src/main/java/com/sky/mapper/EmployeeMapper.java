@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.sky.entity.Employee;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,6 +14,18 @@ public interface EmployeeMapper {
      * @return
      */
     @Select("select * from employee where username = #{username}")
-    Employee getByUsername(String username);
+    Employee getByUsername(String username);//
 
+    /**
+     * 根据实体类对象新增插入数据库
+     * @param employee
+     */
+    @Insert("INSERT INTO employee (" +
+            "username, name, password, phone, sex, id_number, " +
+            "status, create_time, update_time, create_user, update_user" +
+            ") VALUES (" +
+            "#{username}, #{name}, #{password}, #{phone}, #{sex}, #{idNumber}, " +
+            "#{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}" +
+            ")")
+    void insert(Employee employee);
 }
